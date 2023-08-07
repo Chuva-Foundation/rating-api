@@ -5,6 +5,7 @@ const Category = require('models/Category');
 
 jest.spyOn(Item, 'create');
 jest.spyOn(Item, 'findAll');
+jest.spyOn(Item, 'findByPk');
 
 const create_category = () => ({
   name: faker.word.adjective(),
@@ -267,6 +268,33 @@ describe('Controller items', () => {
       expect(JSON.parse(result.body).length).toBe(response.length);
       expect(Item.findAll).toHaveBeenCalled();
       expect(JSON.parse(result.body)).toEqual(items);
+    });
+  });
+
+  describe('get_by_id', () => {
+    it('retrieve and return an item by ID', async () => {
+      // Prepare
+      const mock_category  = create_category();
+      const category = await Category.create(mock_category);
+      const mock_item  = create_item(category);
+
+      // create an item
+      let response = await controller.post({
+        body: JSON.stringify(mock_item)
+      }, { body: null });
+
+      const item = JSON.parse(response.body)
+
+      // Act
+      const result = await controller.get_by_id({
+        params:{
+          id: item.id
+        }
+      }, { body: null});
+
+      // Assert
+      expect(JSON.parse(result.body)).toMatchObject(mock_item);
+      expect(Item.findByPk).toHaveBeenCalledWith(item.id);
     });
   });
 });

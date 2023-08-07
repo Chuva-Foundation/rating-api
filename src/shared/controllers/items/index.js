@@ -46,7 +46,15 @@ const get_all = async (req, res) => {
     return res;
 };
 
+const get_by_id = async (req, res) => {
+    const item = await Item.findByPk(req.params.id);
+
+    res.body = JSON.stringify(item.get());
+    return res;
+};
+
 module.exports = {
     post,
-    get_all
+    get_all,
+    get_by_id
 }
