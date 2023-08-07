@@ -9,7 +9,7 @@
     "build-less": "less-cli build",
     "deploy": "less-cli deploy",
     "pretest": "node ./scripts/pre-test.js && yarn && sequelize db:migrate",
-    "test": "jest",
+    "test": "jest --runInBand",
     "posttest": "sequelize db:migrate:undo:all && node ./scripts/post-test.js && yarn"
   },
   "dependencies": {
