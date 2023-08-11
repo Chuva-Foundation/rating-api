@@ -1,5 +1,6 @@
 const Rating = require('models/Rating');
 const schema = require('./schema');
+const { topics } = require('@chuva.io/less');
 
 const post = async (req, res) => {
     const body = JSON.parse(req.body);
@@ -9,8 +10,15 @@ const post = async (req, res) => {
         throw error;
     }
 
-    const rating = await Rating.create(body);
-    res.body = JSON.stringify(rating.get());
+    const response = await Rating.create(body);
+    const rating = response.get();
+
+    res.body = JSON.stringify(rating);
+
+    await topics.rating_created.publish({
+        rating
+    });
+
     return res;
 };
 
